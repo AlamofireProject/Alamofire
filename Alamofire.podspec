@@ -30,6 +30,4 @@ s.source = { :git => "https://github.com/AlamofireProject/Alamofire.git", :tag =
 # 8
 s.source_files = "Alamofire/**/*.{swift}"
 
-# 9
-s.resources = "Alamofire/**/*.{png,jpeg,jpg,storyboard,xib}"
 end

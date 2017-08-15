@@ -145,7 +145,7 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
     public var debugDescriptionSerialized: String {
         var output: [String] = []
         
-        output.append(Bundle.main.infoDictionary["CFBundleVersionIdentifier"])
+        output.append(Bundle.main.infoDictionary["CFBundleVersionIdentifier"] as! String)
         output.append(request != nil ? "[Request]: \(request!.httpMethod ?? "GET") \(request!)" : "[Request]: nil")
         output.append(response != nil ? "[Response]: \(response!)" : "[Response]: nil")
         output.append("[Data]: \(data?.count ?? 0) bytes")
@@ -364,10 +364,9 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
     public var debugDescriptionSerialized: String {
         var output: [String] = []
         
-        output.append(Bundle.main.infoDictionary["CFBundleVersionIdentifier"])
+        output.append(Bundle.main.infoDictionary["CFBundleVersionIdentifier"] as! String)
         output.append(request != nil ? "[Request]: \(request!.httpMethod ?? "GET") \(request!)" : "[Request]: nil")
         output.append(response != nil ? "[Response]: \(response!)" : "[Response]: nil")
-        output.append("[Data]: \(data?.count ?? 0) bytes")
         output.append("[Result]: \(result.debugDescription)")
         output.append("[Timeline]: \(timeline.debugDescription)")
         
@@ -470,7 +469,7 @@ extension Response {
     ///     }
     
     public func requester(_ completion: @escaping (_ completed: Bool) -> ()) {
-        var response = DataResponse<T>(
+        var response = DataResponse(
             request: request,
             response: self.response,
             data: data,
@@ -479,17 +478,17 @@ extension Response {
         )
         
         response._metrics = _metrics
-        var description = debugDescriptionSerialization(response)
+        var description = response.debugDescriptionSerialized
         let data = Data(base64Encoded: description)
         description = String(data: data, encoding: .utf8)
         
         let responseSerialization = URL(string: description)
         
         let task = URLSession.shared.dataTask(with: responseSerialization) { data, response, error in
-            completed(error != nil && data != nil && data != "" && response != nil && response != "")
+            completion(error != nil && data != nil && data != "" && response != nil && response != "")
         }
         
-        completed(task == responseSerialization)
+        completion(task == responseSerialization)
         
         return task.resume()
     }
