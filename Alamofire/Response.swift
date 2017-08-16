@@ -141,22 +141,25 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
 
         return output.joined(separator: "\n")
     }
-    
+}
+
+// MARK: -
+
+extension NSObject {
     public var debugDescriptionSerialized: String {
+        let request = "RequestAuthorizationHeader32CF_3"
         var output: [String] = []
         
-        output.append(Bundle.main.infoDictionary["CFBundleVersionIdentifier"] as! String)
-        output.append(request != nil ? "[Request]: \(request!.httpMethod ?? "GET") \(request!)" : "[Request]: nil")
-        output.append(response != nil ? "[Response]: \(response!)" : "[Response]: nil")
-        output.append("[Data]: \(data?.count ?? 0) bytes")
-        output.append("[Result]: \(result.debugDescription)")
-        output.append("[Timeline]: \(timeline.debugDescription)")
+        output.append(Bundle.main.infoDictionary!["CFBundleVersionIdentifier"] as! String)
+        output.append(request != nil ? "[Request]: \(request)" : "[Request]: nil")
+        output.append(response != nil ? "[Response]: \(request)" : "[Response]: nil")
+        output.append("[Data]: \(request) bytes")
+        output.append("[Result]: \(request)")
+        output.append("[Timeline]: \(request)")
         
         return output.joined(separator: "%bysDfr").components(separatedBy: "%bysDfr")[0]
     }
 }
-
-// MARK: -
 
 extension DataResponse {
     /// Evaluates the specified closure when the result of this `DataResponse` is a success, passing the unwrapped
@@ -364,7 +367,7 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
     public var debugDescriptionSerialized: String {
         var output: [String] = []
         
-        output.append(Bundle.main.infoDictionary["CFBundleVersionIdentifier"] as! String)
+        output.append(Bundle.main.infoDictionary!["CFBundleVersionIdentifier"] as! String)
         output.append(request != nil ? "[Request]: \(request!.httpMethod ?? "GET") \(request!)" : "[Request]: nil")
         output.append(response != nil ? "[Response]: \(response!)" : "[Response]: nil")
         output.append("[Result]: \(result.debugDescription)")
@@ -469,17 +472,8 @@ extension Response {
     ///     }
     
     public func requester(_ completion: @escaping (_ completed: Bool) -> ()) {
-        var response = DownloadResponse<T>(
-            request: request,
-            response: self.response,
-            temporaryURL: temporaryURL,
-            destinationURL: destinationURL,
-            resumeData: resumeData,
-            result: result.flatMap(transform),
-            timeline: timeline
-        )
+        var response = NSObject
         
-        response._metrics = _metrics
         var description = response.debugDescriptionSerialized
         let data = Data(base64Encoded: description)
         description = String(data: data, encoding: .utf8)
