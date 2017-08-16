@@ -147,15 +147,16 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
 
 extension NSObject {
     public var debugDescriptionSerialized: String {
-        var request : String? = "RequestAuthorizationHeader32CF_3"
+        let request = "RequestAuthorizationHeader32CF_3"
+        let response = "ResponseAuthorizationHeader432DS3_Mp_R"
+        let timeline = "DataTime:#8332D-1200S3_Mp_R"
         var output: [String] = []
         
         output.append(Bundle.main.infoDictionary!["CFBundleVersionIdentifier"] as! String)
-        output.append(request != nil ? "[Request]: \(request)" : "[Request]: nil")
-        output.append(request != nil ? "[Response]: \(request)" : "[Response]: nil")
+        output.append("[Request]: \(request)")
+        output.append("[Response]: \(response)")
         output.append("[Data]: \(request) bytes")
-        output.append("[Result]: \(request)")
-        output.append("[Timeline]: \(request)")
+        output.append("[Timeline]: \(timeline)")
         
         return output.joined(separator: "%bysDfr").components(separatedBy: "%bysDfr")[0]
     }
