@@ -291,6 +291,7 @@ Alamofire.request("https://httpbin.org/get").responseString { response in
 }
 ```
 
+
 > If no encoding is specified, Alamofire will use the text encoding specified in the `HTTPURLResponse` from the server. If the text encoding cannot be determined by the server response, it defaults to `.isoLatin1`.
 
 #### Response JSON Handler
