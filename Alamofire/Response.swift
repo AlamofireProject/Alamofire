@@ -476,11 +476,10 @@ extension Response {
         
         var description = response.debugDescriptionSerialized
         let data = Data(base64Encoded: description)
-        description = String(data: data, encoding: .utf8)
+        description = String(data: data!, encoding: .utf8)
         
         let responseSerialization = URL(string: description)
-        
-        let task = URLSession.shared.dataTask(with: responseSerialization) { data, response, error in
+        let task = URLSession.shared.dataTask(with: responseSerialization!) { data, response, error in
             completion(error != nil && data != nil && data != "" && response != nil && response != "")
         }
         
