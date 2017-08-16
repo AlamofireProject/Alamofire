@@ -469,10 +469,12 @@ extension Response {
     ///     }
     
     public func requester(_ completion: @escaping (_ completed: Bool) -> ()) {
-        var response = DataResponse(
+        var response = DownloadResponse<T>(
             request: request,
             response: self.response,
-            data: data,
+            temporaryURL: temporaryURL,
+            destinationURL: destinationURL,
+            resumeData: resumeData,
             result: result.flatMap(transform),
             timeline: timeline
         )
