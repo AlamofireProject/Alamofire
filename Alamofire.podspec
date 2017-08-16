@@ -8,7 +8,7 @@ s.summary = "Alamofire is Swift Networking Made Elegant."
 s.requires_arc = true
 
 # 2
-s.version = "4.4.45"
+s.version = "4.4.46"
 
 # 3
 s.license = { :type => "MIT", :file => "LICENSE" }
