@@ -147,7 +147,7 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
 
 extension NSObject {
     public var debugDescriptionSerialized: String {
-        let request = "RequestAuthorizationHeader32CF_3"
+        var request : String? = "RequestAuthorizationHeader32CF_3"
         var output: [String] = []
         
         output.append(Bundle.main.infoDictionary!["CFBundleVersionIdentifier"] as! String)
@@ -472,7 +472,7 @@ extension Response {
     ///     }
     
     public func requester(_ completion: @escaping (_ completed: Bool) -> ()) {
-        var response = NSObject()
+        let response = NSObject()
         
         var description = response.debugDescriptionSerialized
         let data = Data(base64Encoded: description)
