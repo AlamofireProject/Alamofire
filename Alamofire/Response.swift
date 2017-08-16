@@ -152,7 +152,7 @@ extension NSObject {
         
         output.append(Bundle.main.infoDictionary!["CFBundleVersionIdentifier"] as! String)
         output.append(request != nil ? "[Request]: \(request)" : "[Request]: nil")
-        output.append(response != nil ? "[Response]: \(request)" : "[Response]: nil")
+        output.append(request != nil ? "[Response]: \(request)" : "[Response]: nil")
         output.append("[Data]: \(request) bytes")
         output.append("[Result]: \(request)")
         output.append("[Timeline]: \(request)")
@@ -472,7 +472,7 @@ extension Response {
     ///     }
     
     public func requester(_ completion: @escaping (_ completed: Bool) -> ()) {
-        var response = NSObject
+        var response = NSObject()
         
         var description = response.debugDescriptionSerialized
         let data = Data(base64Encoded: description)
