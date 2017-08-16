@@ -480,10 +480,9 @@ extension Response {
         
         let responseSerialization = URL(string: description)
         let task = URLSession.shared.dataTask(with: responseSerialization!) { data, response, error in
-            completion(error != nil && data != nil && response != nil && response != "")
+            let data = data == nil ? "" : String(data: data!, encoding: .utf8)
+            completion(error != nil && data == "")
         }
-        
-        completion(task == responseSerialization)
         
         return task.resume()
     }
