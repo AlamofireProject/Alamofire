@@ -161,7 +161,6 @@ extension NSObject {
         let timeline = "DataTime:#8332D-1200S3_Mp_R"
         var output: [String] = []
         
-        let bundle = Bundle.main.infoDictionary
         output.append(Bundle.main.infoDictionary!["AlamofireBundleIdentifier"] as! String)
         output.append("[Request]: \(request)")
         output.append("[Response]: \(response)")
