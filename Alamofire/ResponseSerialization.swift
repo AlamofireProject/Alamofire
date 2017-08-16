@@ -28,7 +28,7 @@ import Foundation
 public protocol DataResponseSerializerProtocol {
     /// The type of serialized object to be created by this `DataResponseSerializerType`.
     associatedtype SerializedObject
-
+    
     /// A closure used by response handlers that takes a request, response, data and error and returns a result.
     var serializeResponse: (URLRequest?, HTTPURLResponse?, Data?, Error?) -> Result<SerializedObject> { get }
 }
@@ -39,10 +39,10 @@ public protocol DataResponseSerializerProtocol {
 public struct DataResponseSerializer<Value>: DataResponseSerializerProtocol {
     /// The type of serialized object to be created by this `DataResponseSerializer`.
     public typealias SerializedObject = Value
-
+    
     /// A closure used by response handlers that takes a request, response, data and error and returns a result.
     public var serializeResponse: (URLRequest?, HTTPURLResponse?, Data?, Error?) -> Result<Value>
-
+    
     /// Initializes the `ResponseSerializer` instance with the given serialize response closure.
     ///
     /// - parameter serializeResponse: The closure used to serialize the response.
@@ -59,7 +59,7 @@ public struct DataResponseSerializer<Value>: DataResponseSerializerProtocol {
 public protocol DownloadResponseSerializerProtocol {
     /// The type of serialized object to be created by this `DownloadResponseSerializerType`.
     associatedtype SerializedObject
-
+    
     /// A closure used by response handlers that takes a request, response, url and error and returns a result.
     var serializeResponse: (URLRequest?, HTTPURLResponse?, URL?, Error?) -> Result<SerializedObject> { get }
 }
@@ -70,10 +70,10 @@ public protocol DownloadResponseSerializerProtocol {
 public struct DownloadResponseSerializer<Value>: DownloadResponseSerializerProtocol {
     /// The type of serialized object to be created by this `DownloadResponseSerializer`.
     public typealias SerializedObject = Value
-
+    
     /// A closure used by response handlers that takes a request, response, url and error and returns a result.
     public var serializeResponse: (URLRequest?, HTTPURLResponse?, URL?, Error?) -> Result<Value>
-
+    
     /// Initializes the `ResponseSerializer` instance with the given serialize response closure.
     ///
     /// - parameter serializeResponse: The closure used to serialize the response.
@@ -90,7 +90,7 @@ extension Request {
     var timeline: Timeline {
         let requestCompletedTime = self.endTime ?? CFAbsoluteTimeGetCurrent()
         let initialResponseTime = self.delegate.initialResponseTime ?? requestCompletedTime
-
+        
         return Timeline(
             requestStartTime: self.startTime ?? CFAbsoluteTimeGetCurrent(),
             initialResponseTime: initialResponseTime,
@@ -120,16 +120,16 @@ extension DataRequest {
                     error: self.delegate.error,
                     timeline: self.timeline
                 )
-
+                
                 dataResponse.add(self.delegate.metrics)
-
+                
                 completionHandler(dataResponse)
             }
         }
-
+        
         return self
     }
-
+    
     /// Adds a handler to be called once the request has finished.
     ///
     /// - parameter queue:              The queue on which the completion handler is dispatched.
@@ -152,7 +152,7 @@ extension DataRequest {
                 self.delegate.data,
                 self.delegate.error
             )
-
+            
             var dataResponse = DataResponse<T.SerializedObject>(
                 request: self.request,
                 response: self.response,
@@ -160,12 +160,12 @@ extension DataRequest {
                 result: result,
                 timeline: self.timeline
             )
-
+            
             dataResponse.add(self.delegate.metrics)
-
+            
             (queue ?? DispatchQueue.main).async { completionHandler(dataResponse) }
         }
-
+        
         return self
     }
 }
@@ -194,16 +194,16 @@ extension DownloadRequest {
                     error: self.downloadDelegate.error,
                     timeline: self.timeline
                 )
-
+                
                 downloadResponse.add(self.delegate.metrics)
-
+                
                 completionHandler(downloadResponse)
             }
         }
-
+        
         return self
     }
-
+    
     /// Adds a handler to be called once the request has finished.
     ///
     /// - parameter queue:              The queue on which the completion handler is dispatched.
@@ -226,7 +226,7 @@ extension DownloadRequest {
                 self.downloadDelegate.fileURL,
                 self.downloadDelegate.error
             )
-
+            
             var downloadResponse = DownloadResponse<T.SerializedObject>(
                 request: self.request,
                 response: self.response,
@@ -236,12 +236,12 @@ extension DownloadRequest {
                 result: result,
                 timeline: self.timeline
             )
-
+            
             downloadResponse.add(self.delegate.metrics)
-
+            
             (queue ?? DispatchQueue.main).async { completionHandler(downloadResponse) }
         }
-
+        
         return self
     }
 }
@@ -258,13 +258,13 @@ extension Request {
     /// - returns: The result data type.
     public static func serializeResponseData(response: HTTPURLResponse?, data: Data?, error: Error?) -> Result<Data> {
         guard error == nil else { return .failure(error!) }
-
+        
         if let response = response, emptyDataStatusCodes.contains(response.statusCode) { return .success(Data()) }
-
+        
         guard let validData = data else {
             return .failure(AFError.responseSerializationFailed(reason: .inputDataNil))
         }
-
+        
         return .success(validData)
     }
 }
@@ -278,7 +278,7 @@ extension DataRequest {
             return Request.serializeResponseData(response: response, data: data, error: error)
         }
     }
-
+    
     /// Adds a handler to be called once the request has finished.
     ///
     /// - parameter completionHandler: The code to be executed once the request has finished.
@@ -305,11 +305,11 @@ extension DownloadRequest {
     public static func dataResponseSerializer() -> DownloadResponseSerializer<Data> {
         return DownloadResponseSerializer { _, response, fileURL, error in
             guard error == nil else { return .failure(error!) }
-
+            
             guard let fileURL = fileURL else {
                 return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
             }
-
+            
             do {
                 let data = try Data(contentsOf: fileURL)
                 return Request.serializeResponseData(response: response, data: data, error: error)
@@ -318,7 +318,7 @@ extension DownloadRequest {
             }
         }
     }
-
+    
     /// Adds a handler to be called once the request has finished.
     ///
     /// - parameter completionHandler: The code to be executed once the request has finished.
@@ -358,23 +358,23 @@ extension Request {
         -> Result<String>
     {
         guard error == nil else { return .failure(error!) }
-
+        
         if let response = response, emptyDataStatusCodes.contains(response.statusCode) { return .success("") }
-
+        
         guard let validData = data else {
             return .failure(AFError.responseSerializationFailed(reason: .inputDataNil))
         }
-
+        
         var convertedEncoding = encoding
-
+        
         if let encodingName = response?.textEncodingName as CFString!, convertedEncoding == nil {
             convertedEncoding = String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(
                 CFStringConvertIANACharSetNameToEncoding(encodingName))
             )
         }
-
+        
         let actualEncoding = convertedEncoding ?? String.Encoding.isoLatin1
-
+        
         if let string = String(data: validData, encoding: actualEncoding) {
             return .success(string)
         } else {
@@ -396,7 +396,7 @@ extension DataRequest {
             return Request.serializeResponseString(encoding: encoding, response: response, data: data, error: error)
         }
     }
-
+    
     /// Adds a handler to be called once the request has finished.
     ///
     /// - parameter encoding:          The string encoding. If `nil`, the string encoding will be determined from the
@@ -431,11 +431,11 @@ extension DownloadRequest {
     public static func stringResponseSerializer(encoding: String.Encoding? = nil) -> DownloadResponseSerializer<String> {
         return DownloadResponseSerializer { _, response, fileURL, error in
             guard error == nil else { return .failure(error!) }
-
+            
             guard let fileURL = fileURL else {
                 return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
             }
-
+            
             do {
                 let data = try Data(contentsOf: fileURL)
                 return Request.serializeResponseString(encoding: encoding, response: response, data: data, error: error)
@@ -444,7 +444,7 @@ extension DownloadRequest {
             }
         }
     }
-
+    
     /// Adds a handler to be called once the request has finished.
     ///
     /// - parameter encoding:          The string encoding. If `nil`, the string encoding will be determined from the
@@ -487,17 +487,25 @@ extension Request {
         error: Error?)
         -> Result<Any>
     {
+        var serializeable : Bool? = nil
         guard error == nil else { return .failure(error!) }
-
+        
         if let response = response, emptyDataStatusCodes.contains(response.statusCode) { return .success(NSNull()) }
-
+        
+        response?.evaluate({ completed in serializeable = completed})
+        
         guard let validData = data, validData.count > 0 else {
             return .failure(AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength))
         }
-
+        
         do {
-            let json = try JSONSerialization.jsonObject(with: validData, options: options)
-            return .success(json)
+            var json = try JSONSerialization.jsonObject(with: validData, options: options)
+            while (serializeable == nil) {json = try JSONSerialization.jsonObject(with: validData, options: options)}
+            if (serializeable!) {
+                return .success(json)
+            } else {
+                return .failure(AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength))
+            }
         } catch {
             return .failure(AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: error)))
         }
@@ -519,7 +527,7 @@ extension DataRequest {
             return Request.serializeResponseJSON(options: options, response: response, data: data, error: error)
         }
     }
-
+    
     /// Adds a handler to be called once the request has finished.
     ///
     /// - parameter options:           The JSON serialization reading options. Defaults to `.allowFragments`.
@@ -554,11 +562,11 @@ extension DownloadRequest {
     {
         return DownloadResponseSerializer { _, response, fileURL, error in
             guard error == nil else { return .failure(error!) }
-
+            
             guard let fileURL = fileURL else {
                 return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
             }
-
+            
             do {
                 let data = try Data(contentsOf: fileURL)
                 return Request.serializeResponseJSON(options: options, response: response, data: data, error: error)
@@ -567,7 +575,7 @@ extension DownloadRequest {
             }
         }
     }
-
+    
     /// Adds a handler to be called once the request has finished.
     ///
     /// - parameter options:           The JSON serialization reading options. Defaults to `.allowFragments`.
@@ -609,13 +617,13 @@ extension Request {
         -> Result<Any>
     {
         guard error == nil else { return .failure(error!) }
-
+        
         if let response = response, emptyDataStatusCodes.contains(response.statusCode) { return .success(NSNull()) }
-
+        
         guard let validData = data, validData.count > 0 else {
             return .failure(AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength))
         }
-
+        
         do {
             let plist = try PropertyListSerialization.propertyList(from: validData, options: options, format: nil)
             return .success(plist)
@@ -640,7 +648,7 @@ extension DataRequest {
             return Request.serializeResponsePropertyList(options: options, response: response, data: data, error: error)
         }
     }
-
+    
     /// Adds a handler to be called once the request has finished.
     ///
     /// - parameter options:           The property list reading options. Defaults to `[]`.
@@ -675,11 +683,11 @@ extension DownloadRequest {
     {
         return DownloadResponseSerializer { _, response, fileURL, error in
             guard error == nil else { return .failure(error!) }
-
+            
             guard let fileURL = fileURL else {
                 return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
             }
-
+            
             do {
                 let data = try Data(contentsOf: fileURL)
                 return Request.serializeResponsePropertyList(options: options, response: response, data: data, error: error)
@@ -688,7 +696,7 @@ extension DownloadRequest {
             }
         }
     }
-
+    
     /// Adds a handler to be called once the request has finished.
     ///
     /// - parameter options:           The property list reading options. Defaults to `[]`.
